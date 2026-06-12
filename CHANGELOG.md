@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [SemVer](https://semver.org/lang/de/).
 
+## [1.0.2] – 2026-06-12
+
+### Behoben
+
+- Login funktionierte im Container nicht (stille Login-Schleife): Ohne
+  `ORIGIN`-Env meldet adapter-node fälschlich `https` als Protokoll, wodurch
+  das Session-Cookie als `Secure` markiert und vom Browser über plain http
+  verworfen wurde. Cookies werden jetzt ohne Secure-Flag gesetzt.
+
 ## [1.0.1] – 2026-06-12
 
 ### Hinzugefügt

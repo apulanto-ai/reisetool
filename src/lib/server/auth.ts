@@ -64,13 +64,17 @@ export async function invalidateUserSessions(userId: string): Promise<void> {
 	await db.delete(sessions).where(eq(sessions.userId, userId));
 }
 
-// secure-Flag aus der tatsächlichen URL ableiten — Zugriff via Tailscale kann plain http sein
+// Kein Secure-Flag: Die App läuft im Heimnetz über plain http. Wichtig:
+// adapter-node meldet ohne ORIGIN-Env fälschlich "https:" als Protokoll,
+// ein vom Protokoll abgeleitetes Secure-Flag würde das Cookie im Browser
+// verwerfen lassen (Login-Schleife). Über https funktionieren die Cookies
+// auch ohne das Flag.
 export function setSessionCookie(event: RequestEvent, token: string, expiresAt: number): void {
 	event.cookies.set(SESSION_COOKIE, token, {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		secure: event.url.protocol === 'https:',
+		secure: false,
 		expires: new Date(expiresAt)
 	});
 }
@@ -86,7 +90,7 @@ export function setThemeCookies(event: RequestEvent, theme: string, accent: stri
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		secure: event.url.protocol === 'https:',
+		secure: false,
 		maxAge: 365 * 24 * 60 * 60
 	} as const;
 	event.cookies.set('theme', theme, opts);
