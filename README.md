@@ -23,43 +23,41 @@ npm run dev
 
 Beim ersten Aufruf erscheint die Einrichtung (`/setup`): Reisename + Admin-Konto anlegen. Die Datenbank entsteht automatisch unter `data/reisetool.db`.
 
-## Deployment auf Unraid
+## Installation auf Unraid
 
-### 1. Image bauen
+Das fertige Docker-Image wird automatisch von GitHub Actions gebaut und auf GHCR veröffentlicht — es ist **kein lokaler Build und kein docker-compose nötig**.
 
-Auf einem Rechner mit Docker (oder direkt auf Unraid im Terminal):
+In Unraid: **Docker → Add Container** und eintragen:
 
-```bash
-docker build -t reisetool .
-```
+| Feld | Wert |
+|---|---|
+| Name | `Reisetool` |
+| Repository | `ghcr.io/apulanto-ai/reisetool:latest` |
+| Network Type | `bridge` (Port 3000 mappen) oder `br0` mit eigener IP |
+| Port (bei bridge) | Host `3000` → Container `3000` |
+| Path | Host `/mnt/user/appdata/reisetool` → Container `/data` |
+| Variable | `TZ` = `Europe/Berlin` |
 
-Alternativ mit Compose: `docker compose up -d --build`
+Apply → fertig. Beim ersten Aufruf von `http://<IP>:3000` erscheint die Einrichtung (Reisename + Admin-Konto). Die SQLite-Datenbank liegt danach unter `/mnt/user/appdata/reisetool/`.
 
-### 2. Datenordner anlegen
+Weitere Umgebungsvariablen braucht es nicht — die App akzeptiert jede URL, unter der sie aufgerufen wird.
 
-```bash
-mkdir -p /mnt/user/appdata/reisetool
-chown -R 99:100 /mnt/user/appdata/reisetool
-```
+### Zugriff im Heimnetz
 
-### 3. Container starten
-
-Wichtige Einstellungen (siehe `docker-compose.yml`, gilt genauso für ein Unraid-Docker-Template):
-
-| Einstellung | Wert | Hinweis |
-|---|---|---|
-| Port | `3000` | Web-UI |
-| Volume | `/mnt/user/appdata/reisetool` → `/data` | SQLite-Datenbank |
-| `ORIGIN` | z.B. `http://192.168.1.10:3000` | **Muss exakt der URL entsprechen, die ihr im Browser eintippt** — sonst werden Formulare mit 403 abgelehnt (CSRF-Schutz von SvelteKit) |
-| `TZ` | `Europe/Berlin` | Für korrekte Datumsvorbelegung |
-| User | `99:100` | Unraid `nobody:users` |
-
-### 4. Zugriff im Heimnetz
-
-1. Im Browser `http://<IP-des-Unraid-Servers>:3000` öffnen (gleiche URL wie in `ORIGIN`)
+1. Im Browser `http://<IP-des-Unraid-Servers>:3000` öffnen
 2. Am Handy: „Zum Startbildschirm hinzufügen" → fühlt sich wie eine App an
 
 Tipp: Dem Unraid-Server im Router eine feste IP geben, damit die URL stabil bleibt.
+
+### Update auf eine neue Version
+
+In Unraid beim Container auf **force update** klicken (zieht das neueste `latest`-Image). Datenbank-Migrationen laufen beim Start automatisch.
+
+### Alternativ: selbst bauen
+
+```bash
+docker build -t reisetool .        # oder: docker compose up -d --build
+```
 
 ### Backup
 

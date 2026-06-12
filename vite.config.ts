@@ -12,6 +12,11 @@ export default defineConfig({
 				runes: ({ filename }) => filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter(),
+
+			// Heimnetz-App ohne feste URL: Formular-POSTs von jeder Origin zulassen,
+			// damit kein ORIGIN-Env nötig ist. CSRF bleibt durch SameSite=Lax-Cookies
+			// abgedeckt (Session wird bei Cross-Site-POSTs nicht mitgesendet).
+			csrf: { trustedOrigins: ['*'] },
 			typescript: {
 				config: (config) => ({
 					...config,

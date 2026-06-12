@@ -4,6 +4,20 @@ Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [SemVer](https://semver.org/lang/de/).
 
+## [1.0.1] – 2026-06-12
+
+### Hinzugefügt
+
+- GitHub-Actions-Workflow: Docker-Image wird automatisch gebaut und auf
+  `ghcr.io/apulanto-ai/reisetool` veröffentlicht (`latest` + Versions-Tags) —
+  Installation auf Unraid direkt über „Add Container", ohne lokalen Build
+
+### Geändert
+
+- Kein `ORIGIN`-Env mehr nötig: Die App akzeptiert jede URL, unter der sie
+  aufgerufen wird (CSRF weiterhin über SameSite=Lax-Session-Cookies abgedeckt)
+- README: Unraid-Anleitung auf das fertige GHCR-Image umgestellt
+
 ## [1.0.0] – 2026-06-12
 
 ### Hinzugefügt

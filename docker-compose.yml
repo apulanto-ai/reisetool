@@ -5,13 +5,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      # Unraid: vorher anlegen und einmalig  chown -R 99:100 /mnt/user/appdata/reisetool
       - /mnt/user/appdata/reisetool:/data
     environment:
-      # MUSS exakt der URL entsprechen, die im Browser eingetippt wird,
-      # sonst lehnt SvelteKit Formular-POSTs mit 403 ab (CSRF-Schutz).
-      # Beispiel: IP des Unraid-Servers im Heimnetz
-      - ORIGIN=http://192.168.1.10:3000
       - TZ=Europe/Berlin
-    user: '99:100' # Unraid nobody:users
     restart: unless-stopped
